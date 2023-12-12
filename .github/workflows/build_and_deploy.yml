@@ -70,7 +70,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Configure snowcli
-        if: ${{ github.ref == 'refs/heads/dev' && github.event.pull_request.merged == true }}
+        if: ${{ github.ref == 'refs/heads/master' && github.event.pull_request.merged == true }}
         env:
           SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT_DEV }}
           SNOWSQL_USER: ${{ secrets.SNOWSQL_USER_DEV }}
@@ -91,7 +91,7 @@ jobs:
           echo "schemaname = $SNOWSQL_SCHEMA " >> config
 
       - name: Deploy Snowpark apps
-        if: ${{ github.ref == 'refs/heads/dev' && github.event.pull_request.merged == true }}
+        if: ${{ github.ref == 'refs/heads/master' && github.event.pull_request.merged == true }}
         env:
           FILES: ${{ steps.filenames.outputs.all }}
         run: python command_center_deploy.py --root_directory=$GITHUB_WORKSPACE --files_list="$FILES"
