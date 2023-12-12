@@ -48,7 +48,7 @@ jobs:
           echo "schemaname = $SNOWSQL_SCHEMA " >> config
 
       - name: Lint code using Super Linter
-        uses: github/super-linter@v5.7.2
+        uses: super-linter/super-linter@v5.7.2
         env:
           VALIDATE_ALL_CODEBASE: "false"  # Set this to "true" if you want to lint all files
 
