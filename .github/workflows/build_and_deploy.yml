@@ -51,7 +51,7 @@ jobs:
         uses: super-linter/super-linter@v5.7.2
         env:
           VALIDATE_ALL_CODEBASE: "false"  # Set this to "true" if you want to lint all files
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.LINT_TOKEN }}
 
   deploy:
     runs-on: ubuntu-latest
