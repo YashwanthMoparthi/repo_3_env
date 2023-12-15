@@ -3,7 +3,9 @@ name: Deploy Snowpark Apps
 on:
   pull_request:
     branches:
-      - [dev, test, release]
+      - dev
+      - test
+      - release
     types:
       - closed
 
@@ -24,18 +26,7 @@ jobs:
       SNOWSQL_DATABASE: ${{ secrets["SNOWSQL_DATABASE_" + matrix.environment] }}
       SNOWSQL_SCHEMA: ${{ secrets["SNOWSQL_SCHEMA_" + matrix.environment] }}
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install Python packages
-        run: pip install -r requirements.txt
-
+    jobs:
       - name: Configure snowcli
         run: |
           cd $GITHUB_WORKSPACE
