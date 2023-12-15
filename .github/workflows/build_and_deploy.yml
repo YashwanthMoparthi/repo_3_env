@@ -26,7 +26,7 @@ jobs:
       SNOWSQL_DATABASE: ${{ secrets["SNOWSQL_DATABASE_" + matrix.environment] }}
       SNOWSQL_SCHEMA: ${{ secrets["SNOWSQL_SCHEMA_" + matrix.environment] }}
 
-    jobs:
+    steps:
       - name: Configure snowcli
         run: |
           cd $GITHUB_WORKSPACE
