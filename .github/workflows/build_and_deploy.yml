@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GITHUB_WORKSPACE: "/home/runner/work/repo_3_env"
+      MANUAL_GITHUB_WORKSPACE: "/home/runner/work/repo_3_env"  # Set the correct path to your repository
 
     steps:
       - name: Set Environment Variables
@@ -45,8 +45,8 @@ jobs:
 
       - name: Debug Script Location
         run: |
-          ls -la $GITHUB_WORKSPACE
-          ls -la $GITHUB_WORKSPACE/command_center_deploy.py
+          ls -la $MANUAL_GITHUB_WORKSPACE
+          ls -la $MANUAL_GITHUB_WORKSPACE/command_center_deploy.py
 
       - name: Check Target Branch
         run: |
@@ -59,4 +59,4 @@ jobs:
 
       # Add your deployment steps here based on the target branch and secrets
       - name: Deploy Snowpark apps
-        run: python $GITHUB_WORKSPACE/command_center_deploy.py --root_directory=$GITHUB_WORKSPACE --files_list="${{ steps.filenames.outputs.all }}"
+        run: python $MANUAL_GITHUB_WORKSPACE/command_center_deploy.py --root_directory=$MANUAL_GITHUB_WORKSPACE --files_list="${{ steps.filenames.outputs.all }}"
