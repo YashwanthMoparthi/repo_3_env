@@ -24,6 +24,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      GITHUB_WORKSPACE: "/home/runner/work/repo_3_env"
+
     steps:
       - name: Set Environment Variables
         run: |
@@ -40,6 +43,11 @@ jobs:
           echo "SNOWSQL_DATABASE=${{ secrets[format('SNOWSQL_DATABASE_{0}', inputs.target_branch)] }}" >> $GITHUB_ENV
           echo "SNOWSQL_SCHEMA=${{ secrets[format('SNOWSQL_SCHEMA_{0}', inputs.target_branch)] }}" >> $GITHUB_ENV
 
+      - name: Debug Script Location
+        run: |
+          ls -la $GITHUB_WORKSPACE
+          ls -la $GITHUB_WORKSPACE/command_center_deploy.py
+
       - name: Check Target Branch
         run: |
           if [ "$TARGET_BRANCH" == "dev" ] || [ "$TARGET_BRANCH" == "test" ] || [ "$TARGET_BRANCH" == "release" ]; then
@@ -51,4 +59,4 @@ jobs:
 
       # Add your deployment steps here based on the target branch and secrets
       - name: Deploy Snowpark apps
-        run: python command_center_deploy.py --root_directory=$GITHUB_WORKSPACE --files_list="${{ steps.filenames.outputs.all }}"
+        run: python $GITHUB_WORKSPACE/command_center_deploy.py --root_directory=$GITHUB_WORKSPACE --files_list="${{ steps.filenames.outputs.all }}"
