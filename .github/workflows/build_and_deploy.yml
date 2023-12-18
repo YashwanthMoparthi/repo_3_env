@@ -41,10 +41,21 @@ jobs:
           echo "SNOWSQL_SCHEMA=${{ secrets[format('SNOWSQL_SCHEMA_{0}', matrix.target_branch)] }}" >> $GITHUB_ENV
           echo "SCRIPT_PATH=$GITHUB_WORKSPACE/repo_3_env/command_center_deploy.py" >> $GITHUB_ENV
 
+      - name: Debug Script Location
+        run: ls -l $GITHUB_WORKSPACE
+
+      - name: Debug Script Location
+        run: ls -l $SCRIPT_PATH
+
+      - name: Set Execute Permission
+        run: chmod +x $SCRIPT_PATH
+
+      - name: List Directory Contents
+        run: ls -l $GITHUB_WORKSPACE/repo_3_env
+
       - name: Check Target Branch
         run: |
           echo "Deploying to $TARGET_BRANCH branch"
 
-      # Add your deployment steps here based on the matrix.target_branch and secrets
       - name: Deploy Snowpark apps
         run: python $SCRIPT_PATH --root_directory=$GITHUB_WORKSPACE --files_list="${{ steps.filenames.outputs.all }}"
