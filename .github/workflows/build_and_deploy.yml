@@ -39,10 +39,13 @@ jobs:
           echo "SNOWSQL_WAREHOUSE=${{ secrets[format('SNOWSQL_WAREHOUSE_{0}', matrix.target_branch)] }}" >> $GITHUB_ENV
           echo "SNOWSQL_DATABASE=${{ secrets[format('SNOWSQL_DATABASE_{0}', matrix.target_branch)] }}" >> $GITHUB_ENV
           echo "SNOWSQL_SCHEMA=${{ secrets[format('SNOWSQL_SCHEMA_{0}', matrix.target_branch)] }}" >> $GITHUB_ENV
-          echo "SCRIPT_PATH=$GITHUB_WORKSPACE/command_center_deploy.py" >> $GITHUB_ENV
+          echo "SCRIPT_PATH=$(find $GITHUB_WORKSPACE -name 'command_center_deploy.py' | head -n 1)" >> $GITHUB_ENV
 
       - name: Debug Script Location
         run: ls -l $GITHUB_WORKSPACE
+
+      - name: Debug Script Location
+        run: ls -l $SCRIPT_PATH
 
       - name: Set Execute Permission
         run: chmod +x $SCRIPT_PATH
