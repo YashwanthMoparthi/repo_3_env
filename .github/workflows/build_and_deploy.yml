@@ -27,7 +27,11 @@ jobs:
     steps:
       - name: Set Environment Variables
         run: |
-          echo "TARGET_BRANCH=${{ github.event_name == 'workflow_dispatch' ? inputs.target_branch : github.event.pull_request.base.ref }}" >> $GITHUB_ENV
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "TARGET_BRANCH=${{ inputs.target_branch }}" >> $GITHUB_ENV
+          else
+            echo "TARGET_BRANCH=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
+          fi
           echo "SNOWSQL_ACCOUNT=${{ secrets[format('SNOWSQL_ACCOUNT_{0}', inputs.target_branch)] }}" >> $GITHUB_ENV
           echo "SNOWSQL_USER=${{ secrets[format('SNOWSQL_USER_{0}', inputs.target_branch)] }}" >> $GITHUB_ENV
           echo "SNOWSQL_PWD=${{ secrets[format('SNOWSQL_PWD_{0}', inputs.target_branch)] }}" >> $GITHUB_ENV
