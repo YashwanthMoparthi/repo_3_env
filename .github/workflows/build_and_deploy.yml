@@ -18,16 +18,17 @@ jobs:
       matrix:
         environment: [dev, test, release]
 
-    env:
-      SNOWSQL_ACCOUNT: ${{ secrets["SNOWSQL_ACCOUNT_" + matrix.environment] }}
-      SNOWSQL_USER: ${{ secrets["SNOWSQL_USER_" + matrix.environment] }}
-      SNOWSQL_PWD: ${{ secrets["SNOWSQL_PWD_" + matrix.environment] }}
-      SNOWSQL_ROLE: ${{ secrets["SNOWSQL_ROLE_" + matrix.environment] }}
-      SNOWSQL_WAREHOUSE: ${{ secrets["SNOWSQL_WAREHOUSE_" + matrix.environment] }}
-      SNOWSQL_DATABASE: ${{ secrets["SNOWSQL_DATABASE_" + matrix.environment] }}
-      SNOWSQL_SCHEMA: ${{ secrets["SNOWSQL_SCHEMA_" + matrix.environment] }}
-
     steps:
+      - name: Set Environment Variables
+        run: |
+          echo "SNOWSQL_ACCOUNT=${{ fromJSON(secrets[format('SNOWSQL_ACCOUNT_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
+          echo "SNOWSQL_USER=${{ fromJSON(secrets[format('SNOWSQL_USER_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
+          echo "SNOWSQL_PWD=${{ fromJSON(secrets[format('SNOWSQL_PWD_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
+          echo "SNOWSQL_ROLE=${{ fromJSON(secrets[format('SNOWSQL_ROLE_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
+          echo "SNOWSQL_WAREHOUSE=${{ fromJSON(secrets[format('SNOWSQL_WAREHOUSE_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
+          echo "SNOWSQL_DATABASE=${{ fromJSON(secrets[format('SNOWSQL_DATABASE_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
+          echo "SNOWSQL_SCHEMA=${{ fromJSON(secrets[format('SNOWSQL_SCHEMA_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
+
       - name: Configure snowcli
         run: |
           cd $GITHUB_WORKSPACE
