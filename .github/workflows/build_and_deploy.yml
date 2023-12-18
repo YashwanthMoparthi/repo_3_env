@@ -48,7 +48,13 @@ jobs:
         run: ls -l $SCRIPT_PATH
 
       - name: Set Execute Permission
-        run: chmod +x $SCRIPT_PATH
+        run: |
+          if [ -n "$SCRIPT_PATH" ]; then
+            chmod +x "$SCRIPT_PATH"
+          else
+            echo "SCRIPT_PATH is empty or not set correctly."
+            exit 1
+          fi
 
       - name: List Directory Contents
         run: ls -l $GITHUB_WORKSPACE
