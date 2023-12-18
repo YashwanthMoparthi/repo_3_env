@@ -3,12 +3,22 @@ name: Deploy Snowpark Apps
 on:
   pull_request:
     branches:
+      - master
       - dev
       - test
       - release
     types:
       - closed
   workflow_dispatch:
+    inputs:
+      target_branch:
+        description: 'Select the target branch for deployment'
+        required: true
+        default: 'dev'
+        options:
+          - dev
+          - test
+          - release
 
 jobs:
   deploy:
@@ -16,30 +26,24 @@ jobs:
 
     strategy:
       matrix:
-        environment: [dev, test, release]
+        target_branch: [dev, test, release]
 
     steps:
       - name: Set Environment Variables
         run: |
-          echo "SNOWSQL_ACCOUNT=${{ fromJSON(secrets[format('SNOWSQL_ACCOUNT_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_USER=${{ fromJSON(secrets[format('SNOWSQL_USER_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_PWD=${{ fromJSON(secrets[format('SNOWSQL_PWD_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_ROLE=${{ fromJSON(secrets[format('SNOWSQL_ROLE_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_WAREHOUSE=${{ fromJSON(secrets[format('SNOWSQL_WAREHOUSE_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_DATABASE=${{ fromJSON(secrets[format('SNOWSQL_DATABASE_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_SCHEMA=${{ fromJSON(secrets[format('SNOWSQL_SCHEMA_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
+          echo "TARGET_BRANCH=${{ matrix.target_branch }}" >> $GITHUB_ENV
+          echo "SNOWSQL_ACCOUNT=${{ secrets[format('SNOWSQL_ACCOUNT_{0}', matrix.target_branch)] }}" >> $GITHUB_ENV
+          echo "SNOWSQL_USER=${{ secrets[format('SNOWSQL_USER_{0}', matrix.target_branch)] }}" >> $GITHUB_ENV
+          echo "SNOWSQL_PWD=${{ secrets[format('SNOWSQL_PWD_{0}', matrix.target_branch)] }}" >> $GITHUB_ENV
+          echo "SNOWSQL_ROLE=${{ secrets[format('SNOWSQL_ROLE_{0}', matrix.target_branch)] }}" >> $GITHUB_ENV
+          echo "SNOWSQL_WAREHOUSE=${{ secrets[format('SNOWSQL_WAREHOUSE_{0}', matrix.target_branch)] }}" >> $GITHUB_ENV
+          echo "SNOWSQL_DATABASE=${{ secrets[format('SNOWSQL_DATABASE_{0}', matrix.target_branch)] }}" >> $GITHUB_ENV
+          echo "SNOWSQL_SCHEMA=${{ secrets[format('SNOWSQL_SCHEMA_{0}', matrix.target_branch)] }}" >> $GITHUB_ENV
 
-      - name: Configure snowcli
+      - name: Check Target Branch
         run: |
-          cd $GITHUB_WORKSPACE
-          echo "[connections.main]" > config
-          echo "accountname = $SNOWSQL_ACCOUNT " >> config
-          echo "username = $SNOWSQL_USER " >> config
-          echo "password = $SNOWSQL_PWD " >> config
-          echo "rolename = $SNOWSQL_ROLE " >> config
-          echo "warehousename = $SNOWSQL_WAREHOUSE " >> config
-          echo "dbname = $SNOWSQL_DATABASE " >> config
-          echo "schemaname = $SNOWSQL_SCHEMA " >> config
+          echo "Deploying to $TARGET_BRANCH branch"
 
+      # Add your deployment steps here based on the target branch and secrets
       - name: Deploy Snowpark apps
         run: python command_center_deploy.py --root_directory=$GITHUB_WORKSPACE --files_list="${{ steps.filenames.outputs.all }}"
