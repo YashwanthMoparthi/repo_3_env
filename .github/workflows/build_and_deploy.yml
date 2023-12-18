@@ -1,35 +1,54 @@
 name: Deploy Snowpark Apps
 
+# Controls when the action will run.
 on:
   pull_request:
-    branches:
-      - dev
-      - test
-      - release
     types:
       - closed
   workflow_dispatch:
+    inputs:
+      target_branch:
+        description: 'Select the target branch for deployment'
+        required: true
+        default: 'dev'
+        options:
+          - dev
+          - test
+          - release
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        environment: [dev, test, release]
-
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python packages
+        run: pip install -r requirements.txt
+
       - name: Set Environment Variables
         run: |
-          echo "SNOWSQL_ACCOUNT=${{ fromJSON(secrets[format('SNOWSQL_ACCOUNT_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_USER=${{ fromJSON(secrets[format('SNOWSQL_USER_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_PWD=${{ fromJSON(secrets[format('SNOWSQL_PWD_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_ROLE=${{ fromJSON(secrets[format('SNOWSQL_ROLE_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_WAREHOUSE=${{ fromJSON(secrets[format('SNOWSQL_WAREHOUSE_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_DATABASE=${{ fromJSON(secrets[format('SNOWSQL_DATABASE_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
-          echo "SNOWSQL_SCHEMA=${{ fromJSON(secrets[format('SNOWSQL_SCHEMA_{0}', matrix.environment)]) }}" >> $GITHUB_ENV
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "TARGET_BRANCH=${{ inputs.target_branch }}" >> $GITHUB_ENV
+          else
+            echo "TARGET_BRANCH=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
+          fi
 
       - name: Configure snowcli
+        env:
+          SNOWSQL_ACCOUNT: ${{ secrets[format('SNOWSQL_ACCOUNT_{0}', inputs.target_branch)] }}
+          SNOWSQL_USER: ${{ secrets[format('SNOWSQL_USER_{0}', inputs.target_branch)] }}
+          SNOWSQL_PWD: ${{ secrets[format('SNOWSQL_PWD_{0}', inputs.target_branch)] }}
+          SNOWSQL_ROLE: ${{ secrets[format('SNOWSQL_ROLE_{0}', inputs.target_branch)] }}
+          SNOWSQL_WAREHOUSE: ${{ secrets[format('SNOWSQL_WAREHOUSE_{0}', inputs.target_branch)] }}
+          SNOWSQL_DATABASE: ${{ secrets[format('SNOWSQL_DATABASE_{0}', inputs.target_branch)] }}
+          SNOWSQL_SCHEMA: ${{ secrets[format('SNOWSQL_SCHEMA_{0}', inputs.target_branch)] }}
         run: |
           cd $GITHUB_WORKSPACE
           echo "[connections.main]" > config
@@ -42,4 +61,6 @@ jobs:
           echo "schemaname = $SNOWSQL_SCHEMA " >> config
 
       - name: Deploy Snowpark apps
-        run: python command_center_deploy.py --root_directory=$GITHUB_WORKSPACE --files_list="${{ steps.filenames.outputs.all }}"
+        env:
+          FILES: ${{ steps.filenames.outputs.all }}
+        run: python command_center_deploy.py --root_directory=$GITHUB_WORKSPACE --files_list="$FILES"
