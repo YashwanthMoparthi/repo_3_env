@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      MANUAL_GITHUB_WORKSPACE: "/home/runner/work/repo_3_env/blob/master"  # Set the correct path to your repository
+      MANUAL_GITHUB_WORKSPACE: "/home/runner/work/repo_3_env/blob/dev"  # Set the correct path to your repository
 
     steps:
       - name: Set Environment Variables
