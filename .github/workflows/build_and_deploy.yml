@@ -52,6 +52,12 @@ jobs:
             exit 1
           fi
 
+      - name: Debug Script Location
+        run: |
+          ls -la $MANUAL_GITHUB_WORKSPACE
+          ls -la $MANUAL_GITHUB_WORKSPACE/repo_3_env
+          ls -la $MANUAL_GITHUB_WORKSPACE/repo_3_env/command_center_deploy.py
+
       # Add your deployment steps here based on the target branch and secrets
       - name: Deploy Snowpark apps
-        run: python $MANUAL_GITHUB_WORKSPACE/command_center_deploy.py --root_directory=$MANUAL_GITHUB_WORKSPACE --files_list="${{ steps.filenames.outputs.all }}"
+        run: python $MANUAL_GITHUB_WORKSPACE/repo_3_env/command_center_deploy.py --root_directory=$MANUAL_GITHUB_WORKSPACE --files_list="${{ steps.filenames.outputs.all }}"
