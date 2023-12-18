@@ -43,11 +43,6 @@ jobs:
           echo "SNOWSQL_DATABASE=${{ secrets[format('SNOWSQL_DATABASE_{0}', inputs.target_branch)] }}" >> $GITHUB_ENV
           echo "SNOWSQL_SCHEMA=${{ secrets[format('SNOWSQL_SCHEMA_{0}', inputs.target_branch)] }}" >> $GITHUB_ENV
 
-      - name: Debug Script Location
-        run: |
-          ls -la $MANUAL_GITHUB_WORKSPACE
-          ls -la $MANUAL_GITHUB_WORKSPACE/command_center_deploy.py
-
       - name: Check Target Branch
         run: |
           if [ "$TARGET_BRANCH" == "dev" ] || [ "$TARGET_BRANCH" == "test" ] || [ "$TARGET_BRANCH" == "release" ]; then
