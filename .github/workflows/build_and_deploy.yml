@@ -19,13 +19,13 @@ jobs:
         environment: [dev, test, release]
 
     env:
-      SNOWSQL_ACCOUNT: ${{ secrets["SNOWSQL_ACCOUNT_" + matrix.environment] }}
-      SNOWSQL_USER: ${{ secrets["SNOWSQL_USER_" + matrix.environment] }}
-      SNOWSQL_PWD: ${{ secrets["SNOWSQL_PWD_" + matrix.environment] }}
-      SNOWSQL_ROLE: ${{ secrets["SNOWSQL_ROLE_" + matrix.environment] }}
-      SNOWSQL_WAREHOUSE: ${{ secrets["SNOWSQL_WAREHOUSE_" + matrix.environment] }}
-      SNOWSQL_DATABASE: ${{ secrets["SNOWSQL_DATABASE_" + matrix.environment] }}
-      SNOWSQL_SCHEMA: ${{ secrets["SNOWSQL_SCHEMA_" + matrix.environment] }}
+      SNOWSQL_ACCOUNT: ${{ fromJSON(secrets["SNOWSQL_ACCOUNT_" + matrix.environment]) }}
+      SNOWSQL_USER: ${{ fromJSON(secrets["SNOWSQL_USER_" + matrix.environment]) }}
+      SNOWSQL_PWD: ${{ fromJSON(secrets["SNOWSQL_PWD_" + matrix.environment]) }}
+      SNOWSQL_ROLE: ${{ fromJSON(secrets["SNOWSQL_ROLE_" + matrix.environment]) }}
+      SNOWSQL_WAREHOUSE: ${{ fromJSON(secrets["SNOWSQL_WAREHOUSE_" + matrix.environment]) }}
+      SNOWSQL_DATABASE: ${{ fromJSON(secrets["SNOWSQL_DATABASE_" + matrix.environment]) }}
+      SNOWSQL_SCHEMA: ${{ fromJSON(secrets["SNOWSQL_SCHEMA_" + matrix.environment]) }}
 
     steps:
       - name: Configure snowcli
