@@ -20,7 +20,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.target_branch == 'main' }}
+    if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.base.ref == 'main' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
