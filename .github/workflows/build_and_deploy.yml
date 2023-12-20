@@ -3,7 +3,7 @@ name: Deploy Snowpark Apps
 on:
   pull_request:
     types:
-      - closed
+      - open
   workflow_dispatch:
     inputs:
       target_branch:
